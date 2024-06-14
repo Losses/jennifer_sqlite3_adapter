@@ -4,7 +4,7 @@ module Jennifer
   module SQLite3
     class CommandInterface < Adapter::DBCommandInterface
       def create_database
-        options = [db_path, ""] of Command::Option
+        options = [db_path, "VACUUM;"] of Command::Option
         command = Command.new(
           executable: "sqlite3",
           options: options
@@ -42,14 +42,7 @@ module Jennifer
       end
 
       def database_exists?
-        command = Command.new(
-          executable: "test",
-          options: ["-e", db_path] of Command::Option
-        )
-        execute(command)
-        true
-      rescue error : Command::Failed
-        false
+        File.exists?(db_path)
       end
 
       private def db_path

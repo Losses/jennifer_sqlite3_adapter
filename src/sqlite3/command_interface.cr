@@ -42,14 +42,7 @@ module Jennifer
       end
 
       def database_exists?
-        command = Command.new(
-          executable: "test",
-          options: ["-e", db_path] of Command::Option
-        )
-        execute(command)
-        true
-      rescue error : Command::Failed
-        false
+        File.exists?(db_path)
       end
 
       private def db_path

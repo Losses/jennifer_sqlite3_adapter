@@ -4,7 +4,7 @@ module Jennifer
   module SQLite3
     class CommandInterface < Adapter::DBCommandInterface
       def create_database
-        options = [db_path, ""] of Command::Option
+        options = [db_path, "VACUUM;"] of Command::Option
         command = Command.new(
           executable: "sqlite3",
           options: options

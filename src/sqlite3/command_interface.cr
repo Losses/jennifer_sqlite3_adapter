@@ -25,10 +25,18 @@ module Jennifer
         options = [db_path, ".schema"] of Command::Option
         command = Command.new(
           executable: "sqlite3",
-          options: options,
-          out_stream: " | grep -v sqlite_sequence > #{config.structure_path}"
+          options: options
         )
-        execute(command)
+        result = execute(command)
+
+        if result[:output].is_a?(IO::Memory)
+          output_string = result[:output].to_s
+          filtered_output = output_string.each_line.reject { |line| line.includes?("sqlite_sequence") }.join("\n")
+      
+          File.write(config.structure_path, filtered_output)
+        else
+          raise "Unexpected output type: #{result[:output].class}"
+        end
       end
 
       def load_schema
